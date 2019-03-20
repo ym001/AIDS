@@ -7,4 +7,4 @@ paper : https://hal.archives-ouvertes.fr/IC_2018/hal-01839552
 
 visualisation des données : http://advanse.lirmm.fr/multistream/
 
-code : 
+code : https://github.com/ym001/AIDS/blob/master/SKL_classif_text.py
