@@ -1,9 +1,9 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 #
-#  classifTextSKL.JeuxSmear4Smear.py
+#  SKL_classif_text.py
 #  
-#  Copyright 2017 yves <yves.mercadier@ac-montpellier.fr>
+#  Copyright 2017 yves <yves.mercadier@lirmm.fr>
 #  
 #  This program is free software; you can redistribute it and/or modify
 #  it under the terms of the GNU General Public License as published by
