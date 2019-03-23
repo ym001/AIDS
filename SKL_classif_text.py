@@ -144,12 +144,11 @@ def main(args):
 	clf['SVC_sigmoid']					= OneVsRestClassifier(SVC(C=C,gamma=0.1,kernel='sigmoid',degree=4))
 	clf['DecisionTree']					= OneVsRestClassifier(DecisionTreeClassifier(max_depth=5))
 	clf['RandomForest']					= OneVsRestClassifier(RandomForestClassifier(n_estimators=500))
-	clf['AdaBoost']						= OneVsRestClassifier(AdaBoostClassifier())
 	clf['AdaBoost']						= OneVsRestClassifier(AdaBoostClassifier(base_estimator=DecisionTreeClassifier(max_depth=5, min_samples_leaf=1),learning_rate=1.,n_estimators=200,algorithm="SAMME"))
 	clf['BernoulliNB']					= OneVsRestClassifier(BernoulliNB())
-	clf['PassiveAggressiveClassifier']	= OneVsRestClassifier(PassiveAggressiveClassifier(loss='hinge',C=1.0,n_iter=50))
+	clf['PassiveAggressiveClassifier']	= OneVsRestClassifier(PassiveAggressiveClassifier(loss='hinge',C=1.0,max_iter=50))
 	clf['KNeighborsClassifier']		  	= OneVsRestClassifier(KNeighborsClassifier(n_neighbors=10))
-	clf['SGDClassifier']			  	= OneVsRestClassifier(SGDClassifier(alpha=.0001, n_iter=50,penalty="elasticnet"))
+	clf['SGDClassifier']			  	= OneVsRestClassifier(SGDClassifier(alpha=.0001, max_iter=50,penalty="elasticnet"))
 	clf['Perceptron']				  	= OneVsRestClassifier(Perceptron(max_iter=50))
 		
 	for classifier  in clf:
