@@ -66,10 +66,10 @@ def lecture_du_jeu_de_20news():
 def clean_all(document):
 	for i in range(len(document)):
 		document[i] = re.sub(re.compile('<.*?>'), '', document[i])	#supprime balise html
-		document[i] = document[i].lower()							#passe en minuscule
-		document[i] = re.sub(re.compile('[^a-z]'), ' ', document[i])#supprime les caracteres speciaux
-		document[i] = re.sub("[ ]{2,}", " ", document[i])			#enleve les espaces successsifs
-		document[i] = document[i].strip()							#enleve les espaces debut et fin
+		document[i] = document[i].lower()				#passe en minuscule
+		document[i] = re.sub(re.compile('[^a-z]'), ' ', document[i])	#supprime les caracteres speciaux
+		document[i] = re.sub("[ ]{2,}", " ", document[i])		#enleve les espaces successsifs
+		document[i] = document[i].strip()				#enleve les espaces debut et fin
 	return document
 
 def stopWords(document):
@@ -135,21 +135,21 @@ def main(args):
 
 	#classifieur
 	clf={}
-	clf['MultinomialNB']				= OneVsRestClassifier(MultinomialNB(alpha=0.01))
-	clf['LinearSVC']					= OneVsRestClassifier(LinearSVC(penalty='l2', loss='squared_hinge', dual=True, tol=0.0001, C=1.0, multi_class='crammer_singer', fit_intercept=True, intercept_scaling=1, class_weight=None, verbose=0, random_state=None, max_iter=1000))
-	clf['SVC']							= OneVsRestClassifier(SVC())
-	clf['SVC_Rbf']						= OneVsRestClassifier(SVC(C=C,gamma=0.1,cache_size=200,decision_function_shape='ovo',kernel='rbf'))
-	clf['SVC_linear']					= OneVsRestClassifier(SVC(C=C,gamma=0.1,kernel='linear'))
-	clf['SVC_poly']						= OneVsRestClassifier(SVC(C=C,gamma=0.1,kernel='poly',degree=4))
-	clf['SVC_sigmoid']					= OneVsRestClassifier(SVC(C=C,gamma=0.1,kernel='sigmoid',degree=4))
-	clf['DecisionTree']					= OneVsRestClassifier(DecisionTreeClassifier(max_depth=5))
-	clf['RandomForest']					= OneVsRestClassifier(RandomForestClassifier(n_estimators=500))
-	clf['AdaBoost']						= OneVsRestClassifier(AdaBoostClassifier(base_estimator=DecisionTreeClassifier(max_depth=5, min_samples_leaf=1),learning_rate=1.,n_estimators=200,algorithm="SAMME"))
-	clf['BernoulliNB']					= OneVsRestClassifier(BernoulliNB())
+	clf['MultinomialNB']			= OneVsRestClassifier(MultinomialNB(alpha=0.01))
+	clf['LinearSVC']			= OneVsRestClassifier(LinearSVC(penalty='l2', loss='squared_hinge', dual=True, tol=0.0001, C=1.0, multi_class='crammer_singer', fit_intercept=True, intercept_scaling=1, class_weight=None, verbose=0, random_state=None, max_iter=1000))
+	clf['SVC']				= OneVsRestClassifier(SVC())
+	clf['SVC_Rbf']				= OneVsRestClassifier(SVC(C=C,gamma=0.1,cache_size=200,decision_function_shape='ovo',kernel='rbf'))
+	clf['SVC_linear']			= OneVsRestClassifier(SVC(C=C,gamma=0.1,kernel='linear'))
+	clf['SVC_poly']				= OneVsRestClassifier(SVC(C=C,gamma=0.1,kernel='poly',degree=4))
+	clf['SVC_sigmoid']			= OneVsRestClassifier(SVC(C=C,gamma=0.1,kernel='sigmoid',degree=4))
+	clf['DecisionTree']			= OneVsRestClassifier(DecisionTreeClassifier(max_depth=5))
+	clf['RandomForest']			= OneVsRestClassifier(RandomForestClassifier(n_estimators=500))
+	clf['AdaBoost']				= OneVsRestClassifier(AdaBoostClassifier(base_estimator=DecisionTreeClassifier(max_depth=5, min_samples_leaf=1),learning_rate=1.,n_estimators=200,algorithm="SAMME"))
+	clf['BernoulliNB']			= OneVsRestClassifier(BernoulliNB())
 	clf['PassiveAggressiveClassifier']	= OneVsRestClassifier(PassiveAggressiveClassifier(loss='hinge',C=1.0,max_iter=50))
-	clf['KNeighborsClassifier']		  	= OneVsRestClassifier(KNeighborsClassifier(n_neighbors=10))
-	clf['SGDClassifier']			  	= OneVsRestClassifier(SGDClassifier(alpha=.0001, max_iter=50,penalty="elasticnet"))
-	clf['Perceptron']				  	= OneVsRestClassifier(Perceptron(max_iter=50))
+	clf['KNeighborsClassifier']		= OneVsRestClassifier(KNeighborsClassifier(n_neighbors=10))
+	clf['SGDClassifier']			= OneVsRestClassifier(SGDClassifier(alpha=.0001, max_iter=50,penalty="elasticnet"))
+	clf['Perceptron']			= OneVsRestClassifier(Perceptron(max_iter=50))
 		
 	for classifier  in clf:
 		classif= Pipeline([('vectorizer', CountVectorizer()),('tfidf', TfidfTransformer()),('clf', clf[classifier])])
