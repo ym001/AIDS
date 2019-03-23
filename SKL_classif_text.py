@@ -1,9 +1,9 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 #
-#  SKL_classif_text.py
+#  classifTextSKL.JeuxSmear4Smear.py
 #  
-#  Copyright 2017 yves <yves.mercadier@lirmm.fr>
+#  Copyright 2017 yves <yves.mercadier@ac-montpellier.fr>
 #  
 #  This program is free software; you can redistribute it and/or modify
 #  it under the terms of the GNU General Public License as published by
@@ -36,6 +36,7 @@ from sklearn.neighbors import KNeighborsClassifier
 from sklearn.linear_model import SGDClassifier
 from sklearn.model_selection import cross_val_predict
 from sklearn.linear_model import Perceptron
+from sklearn.datasets import fetch_20newsgroups
 
 from sklearn.metrics import accuracy_score
 from sklearn.feature_extraction.text import TfidfTransformer
@@ -43,7 +44,6 @@ from sklearn.multiclass import OneVsRestClassifier,OneVsOneClassifier
 from sklearn.preprocessing import MultiLabelBinarizer
 from sklearn.metrics import precision_score,recall_score,accuracy_score,f1_score
 from sklearn.model_selection import cross_validate
-from keras.datasets import imdb
 import re
 from nltk.corpus import stopwords
 from nltk.stem import WordNetLemmatizer
@@ -53,31 +53,23 @@ import numpy as np
 
 import unicodedata
 
-def lecture_du_jeu_de_imdbkeras():
-		max_words=20000
-		x_train_imdb=[]
-		y_train_imdb=[]
-		(x_imdb, y_imdb), (x_test_imdb, y_test_imdb) = imdb.load_data(num_words=max_words,maxlen=300,seed=113)
-		
-		#reconstruction
-		wordDict = {y:x for x,y in imdb.get_word_index().items()}
-		for doc in x_imdb:
-			sequence=""
-			for index in doc:
-				sequence+=" "+wordDict.get(index)
-			x_train_imdb.append(sequence)
-		for i in y_imdb:
-			y_train_imdb.append(str(i))
-					
-		return x_train_imdb,y_train_imdb
+def lecture_du_jeu_de_20news():
+		#categorie = ['sci.crypt', 'sci.electronics','sci.med', 'sci.space','rec.autos','rec.motorcycles','rec.sport.baseball','rec.sport.hockey','talk.politics.guns','talk.politics.mideast','talk.politics.misc','talk.religion.misc']
+		categorie = ['sci.crypt', 'sci.electronics','sci.med']
+		twenty_train = fetch_20newsgroups(subset='train',categories=categorie, shuffle=True, random_state=42)
+		doc=twenty_train.data
+		label=[]
+		for i in range(len(twenty_train.target)):
+			label.append([categorie[twenty_train.target[i]]])
+		return doc,label,categorie
 		
 def clean_all(document):
 	for i in range(len(document)):
 		document[i] = re.sub(re.compile('<.*?>'), '', document[i])	#supprime balise html
-		document[i] = document[i].lower()				#passe en minuscule
-		document[i] = re.sub(re.compile('[^a-z]'), ' ', document[i])	#supprime les caracteres speciaux
-		document[i] = re.sub("[ ]{2,}", " ", document[i])		#enleve les espaces successsifs
-		document[i] = document[i].strip()				#enleve les espaces debut et fin
+		document[i] = document[i].lower()							#passe en minuscule
+		document[i] = re.sub(re.compile('[^a-z]'), ' ', document[i])#supprime les caracteres speciaux
+		document[i] = re.sub("[ ]{2,}", " ", document[i])			#enleve les espaces successsifs
+		document[i] = document[i].strip()							#enleve les espaces debut et fin
 	return document
 
 def stopWords(document):
@@ -126,8 +118,8 @@ def list_label(label_jeu):
 def main(args):
 
 	#importation des données
-	doc_train,label_train=lecture_du_jeu_de_imdbkeras()
-	label=list_label(label_train)
+	doc_train,label_train,label=lecture_du_jeu_de_20news()
+
 	doc_train	= np.asarray(doc_train)
 	doc_train=pretraitement_document(doc_train)
 	
@@ -143,22 +135,22 @@ def main(args):
 
 	#classifieur
 	clf={}
-	clf['MultinomialNB']			= OneVsRestClassifier(MultinomialNB(alpha=0.01))
-	clf['LinearSVC']			= OneVsRestClassifier(LinearSVC(penalty='l2', loss='squared_hinge', dual=True, tol=0.0001, C=1.0, multi_class='crammer_singer', fit_intercept=True, intercept_scaling=1, class_weight=None, verbose=0, random_state=None, max_iter=1000))
-	clf['SVC']				= OneVsRestClassifier(SVC())
-	clf['SVC_Rbf']				= OneVsRestClassifier(SVC(C=C,gamma=0.1,cache_size=200,decision_function_shape='ovo',kernel='rbf'))
-	clf['SVC_linear']			= OneVsRestClassifier(SVC(C=C,gamma=0.1,kernel='linear'))
-	clf['SVC_poly']				= OneVsRestClassifier(SVC(C=C,gamma=0.1,kernel='poly',degree=4))
-	clf['SVC_sigmoid']			= OneVsRestClassifier(SVC(C=C,gamma=0.1,kernel='sigmoid',degree=4))
-	clf['DecisionTree']			= OneVsRestClassifier(DecisionTreeClassifier(max_depth=5))
-	clf['RandomForest']			= OneVsRestClassifier(RandomForestClassifier(n_estimators=500))
-	clf['AdaBoost']				= OneVsRestClassifier(AdaBoostClassifier())
-	clf['AdaBoost']				= OneVsRestClassifier(AdaBoostClassifier(base_estimator=DecisionTreeClassifier(max_depth=5, min_samples_leaf=1),learning_rate=1.,n_estimators=200,algorithm="SAMME"))
-	clf['BernoulliNB']			= OneVsRestClassifier(BernoulliNB())
+	clf['MultinomialNB']				= OneVsRestClassifier(MultinomialNB(alpha=0.01))
+	clf['LinearSVC']					= OneVsRestClassifier(LinearSVC(penalty='l2', loss='squared_hinge', dual=True, tol=0.0001, C=1.0, multi_class='crammer_singer', fit_intercept=True, intercept_scaling=1, class_weight=None, verbose=0, random_state=None, max_iter=1000))
+	clf['SVC']							= OneVsRestClassifier(SVC())
+	clf['SVC_Rbf']						= OneVsRestClassifier(SVC(C=C,gamma=0.1,cache_size=200,decision_function_shape='ovo',kernel='rbf'))
+	clf['SVC_linear']					= OneVsRestClassifier(SVC(C=C,gamma=0.1,kernel='linear'))
+	clf['SVC_poly']						= OneVsRestClassifier(SVC(C=C,gamma=0.1,kernel='poly',degree=4))
+	clf['SVC_sigmoid']					= OneVsRestClassifier(SVC(C=C,gamma=0.1,kernel='sigmoid',degree=4))
+	clf['DecisionTree']					= OneVsRestClassifier(DecisionTreeClassifier(max_depth=5))
+	clf['RandomForest']					= OneVsRestClassifier(RandomForestClassifier(n_estimators=500))
+	clf['AdaBoost']						= OneVsRestClassifier(AdaBoostClassifier())
+	clf['AdaBoost']						= OneVsRestClassifier(AdaBoostClassifier(base_estimator=DecisionTreeClassifier(max_depth=5, min_samples_leaf=1),learning_rate=1.,n_estimators=200,algorithm="SAMME"))
+	clf['BernoulliNB']					= OneVsRestClassifier(BernoulliNB())
 	clf['PassiveAggressiveClassifier']	= OneVsRestClassifier(PassiveAggressiveClassifier(loss='hinge',C=1.0,n_iter=50))
-	clf['KNeighborsClassifier']		= OneVsRestClassifier(KNeighborsClassifier(n_neighbors=10))
-	clf['SGDClassifier']			= OneVsRestClassifier(SGDClassifier(alpha=.0001, n_iter=50,penalty="elasticnet"))
-	clf['Perceptron']			= OneVsRestClassifier(Perceptron(n_iter=50))
+	clf['KNeighborsClassifier']		  	= OneVsRestClassifier(KNeighborsClassifier(n_neighbors=10))
+	clf['SGDClassifier']			  	= OneVsRestClassifier(SGDClassifier(alpha=.0001, n_iter=50,penalty="elasticnet"))
+	clf['Perceptron']				  	= OneVsRestClassifier(Perceptron(max_iter=50))
 		
 	for classifier  in clf:
 		classif= Pipeline([('vectorizer', CountVectorizer()),('tfidf', TfidfTransformer()),('clf', clf[classifier])])
