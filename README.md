@@ -10,3 +10,5 @@ paper : https://hal.archives-ouvertes.fr/IC_2018/hal-01839552
 visualisation des données : http://advanse.lirmm.fr/multistream/
 
 code : https://github.com/ym001/AIDS/blob/master/SKL_classif_text.py
+
+https://www.amazon.fr/ABcédaire-Amoureux-lIntelligence-Artificielle-Mercadier/dp/B0C872FTS3
